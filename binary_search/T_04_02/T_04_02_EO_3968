@@ -1,0 +1,18 @@
+import math
+
+def find_x(C):
+    left, right = 0, C
+    eps = 1e-10  # Tighter precision to match expected results
+
+    while right - left > eps:
+        mid = (left + right) / 2
+        if mid * mid + math.sqrt(mid) > C:
+            right = mid
+        else:
+            left = mid
+
+    print(f"{left:.10f}")  # Ensure high precision output
+
+# Read input
+C = float(input().strip())
+find_x(C)

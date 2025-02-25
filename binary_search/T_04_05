@@ -1,0 +1,20 @@
+def f(x):
+    return x**3 + 4*x**2 + x - 6
+
+def bisection_method(a, b, tol=1e-6):
+    if f(a) * f(b) > 0:
+        raise ValueError("The function must have opposite signs at the endpoints.")
+
+    while (b - a) / 2 > tol:
+        m = (a + b) / 2
+        if abs(f(m)) < tol:
+            return m
+        elif f(a) * f(m) < 0:
+            b = m
+        else:
+            a = m
+    return (a + b) / 2
+
+# Interval [0, 2]
+root = bisection_method(0, 2)
+print(f"Root found: {root:.6f}")

@@ -1,0 +1,26 @@
+import math
+
+def f(x):
+    return math.sin(x) - x / 3
+
+def binary_search_root(a, b, eps=1e-6):
+    if f(a) * f(b) > 0:
+        raise ValueError("Function values at the interval endpoints must have opposite signs.")
+    
+    while (b - a) > eps:
+        mid = (a + b) / 2
+        if f(mid) == 0:
+            return mid
+        elif f(a) * f(mid) < 0:
+            b = mid
+        else:
+            a = mid
+    
+    return (a + b) / 2
+
+# Define the interval
+a, b = 1.6, 3
+
+# Find the root
+root = binary_search_root(a, b)
+print(f"Root found at x = {root:.6f}")

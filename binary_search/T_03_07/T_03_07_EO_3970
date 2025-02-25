@@ -1,0 +1,27 @@
+import sys
+import bisect
+
+# Read input all at once for efficiency
+input_data = sys.stdin.read().split()
+
+# Read n
+n = int(input_data[0])
+
+# Read colors if n > 0, else set an empty list
+colors = list(map(int, input_data[1:n+1])) if n > 0 else []
+
+# Read m
+m = int(input_data[n+1])
+
+# Read queries
+queries = list(map(int, input_data[n+2:n+2+m]))
+
+# Process queries using binary search
+result = []
+for q in queries:
+    left = bisect.bisect_left(colors, q)
+    right = bisect.bisect_right(colors, q)
+    result.append(str(right - left))  # Convert to string for fast output
+
+# Print results efficiently
+sys.stdout.write("\n".join(result) + "\n")

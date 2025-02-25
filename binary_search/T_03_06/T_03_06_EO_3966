@@ -1,0 +1,31 @@
+import sys
+import bisect
+
+# Read input efficiently
+input_data = sys.stdin.read().split()
+
+# Read n (number of species in the collection)
+n = int(input_data[0])
+
+# Read butterfly species (sorted)
+butterflies = list(map(int, input_data[1:n+1]))
+
+# Read m (number of queries)
+m = int(input_data[n+1])
+
+# Read queries
+queries = list(map(int, input_data[n+2:n+2+m]))
+
+# Prepare output list
+result = []
+
+# Process each query
+for q in queries:
+    idx = bisect.bisect_left(butterflies, q)
+    if idx < n and butterflies[idx] == q:
+        result.append("YES")
+    else:
+        result.append("NO")
+
+# Print all results efficiently
+sys.stdout.write("\n".join(result) + "\n")
