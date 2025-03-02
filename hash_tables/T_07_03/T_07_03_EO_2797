@@ -1,0 +1,34 @@
+import sys
+
+# Custom Hash Table Implementation
+class HashTable:
+    def __init__(self, size=100003):  # Large prime number to reduce collisions
+        self.size = size
+        self.table = [[] for _ in range(size)]
+        self.unique_count = 0
+
+    def _hash(self, number):
+        """Simple modular hash function"""
+        return number % self.size
+
+    def insert(self, number):
+        """Insert number if not already present"""
+        h = self._hash(number)
+        if number not in self.table[h]:  # Avoid duplicates
+            self.table[h].append(number)
+            self.unique_count += 1
+
+# Read input
+input_data = sys.stdin.read().split("\n")
+N = int(input_data[0])
+numbers = map(int, input_data[1].split())
+
+# Create hash table
+contact_book = HashTable()
+
+# Insert numbers
+for num in numbers:
+    contact_book.insert(num)
+
+# Output unique count
+print(contact_book.unique_count)

@@ -1,0 +1,69 @@
+import sys
+import re
+
+# Custom Hash Table Implementation
+class HashTable:
+    def __init__(self, size=10003):  # Large prime number for fewer collisions
+        self.size = size
+        self.table = [[] for _ in range(size)]
+
+    def _hash(self, word):
+        """Polynomial rolling hash function"""
+        p = 31
+        hash_value = 0
+        p_pow = 1
+        for char in word:
+            hash_value = (hash_value + (ord(char) - ord('a') + 1) * p_pow) % self.size
+            p_pow = (p_pow * p) % self.size
+        return hash_value
+
+    def insert(self, word):
+        """Insert word into hash table if not already present"""
+        h = self._hash(word)
+        if word not in self.table[h]:  # Avoid duplicates
+            self.table[h].append(word)
+
+    def contains(self, word):
+        """Check if word exists in hash table"""
+        h = self._hash(word)
+        return word in self.table[h]
+
+# Read input
+input_data = sys.stdin.read().split("\n")
+
+N, M = map(int, input_data[0].split())
+
+# Create hash tables
+dictionary = HashTable()
+essay_words = HashTable()
+
+# Read dictionary words
+for i in range(1, N + 1):
+    word = input_data[i].strip().lower()
+    dictionary.insert(word)
+
+# Process essay
+essay_text = " ".join(input_data[N + 1:])  # Join remaining lines
+words_in_essay = re.findall(r"[a-zA-Z]+", essay_text.lower())  # Extract words
+
+# Add words to essay hash table and check if unknown words exist
+unknown_words_exist = False
+for word in words_in_essay:
+    essay_words.insert(word)
+    if not dictionary.contains(word):
+        unknown_words_exist = True  # Found an unknown word
+
+# Check if all dictionary words are in the essay
+missing_words_exist = False
+for i in range(1, N + 1):
+    word = input_data[i].strip().lower()
+    if not essay_words.contains(word):
+        missing_words_exist = True  # Found a missing word
+
+# Output the result
+if unknown_words_exist:
+    print("Some words from the text are unknown.")
+elif missing_words_exist:
+    print("The usage of the vocabulary is not perfect.")
+else:
+    print("Everything is going to be OK.")
