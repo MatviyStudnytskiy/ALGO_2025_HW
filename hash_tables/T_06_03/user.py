@@ -1,75 +1,91 @@
-class Book:
-    def __init__(self, author, title):
-        self.author = author
-        self.title = title
-
-class Library:
-    def __init__(self, size=100):  # Default hash table size is 100
+class HashTable:
+    def __init__(self, size=100003):  # Large prime number for better distribution
         self.size = size
         self.table = [None] * size
+        self.deleted = object()
 
-    def _hash_function(self, author):
-        # Basic custom hash function (forbidden to use built-in hash())
+    def _hash(self, key):
+        """ Custom hash function using polynomial rolling hash """
+        p, m = 31, self.size
         hash_value = 0
-        for char in author:
-            hash_value += ord(char)
-        return hash_value % self.size
+        for c in key:
+            hash_value = (hash_value * p + ord(c)) % m
+        return hash_value
 
-    def init(self):
-        """ Called once at the beginning of program execution. """
-        self.table = [None] * self.size
+    def _probe(self, index):
+        """ Linear probing """
+        return (index + 1) % self.size
 
-    def addBook(self, author, title):
-        """ Adds a book to the library. """
-        index = self._hash_function(author)
+    def insert(self, key):
+        index = self._hash(key)
+        while self.table[index] is not None and self.table[index] != self.deleted:
+            if self.table[index] == key:
+                return  # Key already exists
+            index = self._probe(index)
+        self.table[index] = key
+
+    def search(self, key):
+        index = self._hash(key)
+        start = index
         while self.table[index] is not None:
-            index = (index + 1) % self.size
-        self.table[index] = Book(author, title)
-
-    def find(self, author, title):
-        """ Checks if the given book is in the library. """
-        index = self._hash_function(author)
-        while self.table[index] is not None:
-            if self.table[index].author == author and self.table[index].title == title:
+            if self.table[index] == key:
                 return True
-            index = (index + 1) % self.size
+            index = self._probe(index)
+            if index == start:
+                break  # Full loop completed
         return False
 
-    def delete(self, author, title):
-        """ Deletes a book from the library. """
-        index = self._hash_function(author)
+    def delete(self, key):
+        index = self._hash(key)
+        start = index
         while self.table[index] is not None:
-            if self.table[index].author == author and self.table[index].title == title:
-                self.table[index] = None
+            if self.table[index] == key:
+                self.table[index] = self.deleted
                 return
-            index = (index + 1) % self.size
+            index = self._probe(index)
+            if index == start:
+                break
 
-    def findByAuthor(self, author):
-        """ Returns a list of books by the specified author. """
-        books_by_author = []
-        for book in self.table:
-            if book and book.author == author:
-                books_by_author.append(book.title)
-        books_by_author.sort()  # Sort alphabetically
-        return books_by_author
 
-# Example usage:
-if __name__ == "__main__":
+class Library:
+    def __init__(self):
+        self.books = HashTable()
+        self.authors = {}
+
+    def add_book(self, author, title):
+        key = f"{author}={title}"
+        self.books.insert(key)
+        if author not in self.authors:
+            self.authors[author] = set()
+        self.authors[author].add(title)
+
+    def find(self, author, title):
+        return self.books.search(f"{author}={title}")
+
+    def delete(self, author, title):
+        key = f"{author}={title}"
+        self.books.delete(key)
+        if author in self.authors:
+            self.authors[author].discard(title)
+
+    def find_by_author(self, author):
+        return sorted(self.authors.get(author, []))
+
+
+library = None
+
+def init():
+    global library
     library = Library()
 
-    # Adding books
-    library.addBook("Stephen King", "The Shining")
-    library.addBook("Stephen King", "It")
-    library.addBook("J.K. Rowling", "Harry Potter and the Philosopher's Stone")
-    library.addBook("J.K. Rowling", "Harry Potter and the Chamber of Secrets")
+def addBook(author, title):
+    library.add_book(author, title)
 
-    # Finding books
-    print(library.find("Stephen King", "It"))  # True
-    print(library.find("J.K. Rowling", "Harry Potter"))  # False
+def find(author, title):
+    return library.find(author, title)
 
-    # Deleting a book
-    library.delete("Stephen King", "It")
-    print(library.find("Stephen King", "It"))  # False
+def delete(author, title):
+    library.delete(author, title)
 
-    # Finding books by author
-    print(library.findByAuthor("J.K. Rowling"))  # ['Harry Potter and the Chamber of Secrets', 'Harry Potter and the Philosopher's Stone']
+def findByAuthor(author):
+    return library.find_by_author(author)
