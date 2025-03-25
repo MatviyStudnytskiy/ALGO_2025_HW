@@ -1,0 +1,25 @@
+def get_last_digit(num):
+    """Returns the last digit of a number."""
+    return num % 10
+
+def selection_sort(arr):
+    """Sorts the array using selection sort based on last digit, then by value."""
+    n = len(arr)
+    for i in range(n - 1):
+        min_idx = i
+        for j in range(i + 1, n):
+            if (get_last_digit(arr[j]) < get_last_digit(arr[min_idx]) or
+                (get_last_digit(arr[j]) == get_last_digit(arr[min_idx]) and arr[j] < arr[min_idx])):
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+
+def main():
+    n = int(input().strip())
+    numbers = [int(input().strip()) for _ in range(n)]
+    
+    selection_sort(numbers)
+    
+    print(" ".join(map(str, numbers)))
+
+if __name__ == "__main__":
+    main()

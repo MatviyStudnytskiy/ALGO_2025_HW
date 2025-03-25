@@ -1,0 +1,18 @@
+def selection_sort(words):
+    n = len(words)
+    for i in range(n):
+        min_idx = i
+        for j in range(i + 1, n):
+            if words[j] < words[min_idx]:  # Compare lexicographically
+                min_idx = j
+        words[i], words[min_idx] = words[min_idx], words[i]  # Swap
+
+# Read input
+n = int(input().strip())  # Number of words
+words = [input().strip() for _ in range(n)]  # List of words
+
+# Sort words using selection sort
+selection_sort(words)
+
+# Print sorted words
+print("\n".join(words))

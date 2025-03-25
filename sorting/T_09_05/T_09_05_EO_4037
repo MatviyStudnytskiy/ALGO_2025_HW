@@ -1,0 +1,40 @@
+def merge_sort(arr):
+    """Sorts an array of (primary, secondary) pairs using Merge Sort."""
+    if len(arr) <= 1:
+        return arr
+    
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    
+    return merge(left, right)
+
+def merge(left, right):
+    """Merges two sorted lists while maintaining stability."""
+    sorted_list = []
+    i = j = 0
+    
+    while i < len(left) and j < len(right):
+        if left[i][0] <= right[j][0]:  # Sort by primary number
+            sorted_list.append(left[i])
+            i += 1
+        else:
+            sorted_list.append(right[j])
+            j += 1
+    
+    # Append remaining elements
+    sorted_list.extend(left[i:])
+    sorted_list.extend(right[j:])
+    
+    return sorted_list
+
+def main():
+    n = int(input().strip())
+    arr = [tuple(map(int, input().strip().split())) for _ in range(n)]
+    sorted_arr = merge_sort(arr)
+    
+    for primary, secondary in sorted_arr:
+        print(primary, secondary)
+
+if __name__ == "__main__":
+    main()

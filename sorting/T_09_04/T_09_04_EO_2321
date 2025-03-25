@@ -1,0 +1,18 @@
+def quick_sort(arr):
+    """Sorts the array using the Quick Sort algorithm."""
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quick_sort(left) + middle + quick_sort(right)
+
+def main():
+    n = int(input().strip())
+    arr = list(map(int, input().strip().split()))
+    sorted_arr = quick_sort(arr)
+    print(" ".join(map(str, sorted_arr)))
+
+if __name__ == "__main__":
+    main()

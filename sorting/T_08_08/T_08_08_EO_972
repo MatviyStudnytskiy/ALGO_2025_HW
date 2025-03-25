@@ -1,0 +1,19 @@
+def selection_sort(times):
+    n = len(times)
+    for i in range(n):
+        min_idx = i
+        for j in range(i + 1, n):
+            if times[j] < times[min_idx]:  # Compare tuples (h, m, s)
+                min_idx = j
+        times[i], times[min_idx] = times[min_idx], times[i]  # Swap
+
+# Read input
+n = int(input().strip())  # Number of time moments
+times = [tuple(map(int, input().split())) for _ in range(n)]  # Read time tuples
+
+# Sort using selection sort
+selection_sort(times)
+
+# Print sorted time moments
+for h, m, s in times:
+    print(h, m, s)

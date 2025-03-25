@@ -1,0 +1,39 @@
+import sys
+
+def sum_of_digits(x):
+    """ Returns the sum of digits of a number x. """
+    return sum(int(d) for d in str(x))
+
+def count_prefix(n, prefix):
+    """ Counts how many numbers ≤ n start with the given prefix. """
+    curr, next_prefix = prefix, prefix + 1
+    count = 0
+    while curr <= n:
+        count += min(n + 1, next_prefix) - curr
+        curr *= 10
+        next_prefix *= 10
+    return count
+
+def find_kth_number(n, k):
+    """ Finds the k-th number in graded lexicographic order. """
+    current = 1
+    k -= 1  # Since we already consider '1' as the first number
+    
+    while k > 0:
+        count = count_prefix(n, current)
+        if count <= k:
+            # Skip over this prefix
+            k -= count
+            current += 1  # Move to the next number
+        else:
+            # Move deeper into this prefix
+            current *= 10
+            k -= 1  # Count 'current' itself as visited
+
+    return current
+
+if __name__ == "__main__":
+    n, k = map(int, sys.stdin.read().strip().split())
+    result = find_kth_number(n, k)
+    print(k)
+    print(result)

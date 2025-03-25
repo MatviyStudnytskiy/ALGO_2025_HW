@@ -1,0 +1,20 @@
+def insertion_sort_with_steps(arr):
+    n = len(arr)
+    for i in range(1, n):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]  # Shift element to the right
+            j -= 1
+        arr[j + 1] = key  # Place the key in the correct position
+
+        # Print array state only if it changed
+        if j + 1 != i:
+            print(" ".join(map(str, arr)))
+
+# Read input
+n = int(input().strip())  # Number of elements
+arr = list(map(int, input().strip().split()))  # Array elements
+
+# Sort using insertion sort and display steps
+insertion_sort_with_steps(arr)
