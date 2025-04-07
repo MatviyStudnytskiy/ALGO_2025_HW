@@ -1,0 +1,52 @@
+# Бінарний пошук на пальцях
+def binary_search(array, target):
+    # Ініціалізувати лівий та правий пойнтери
+    left = 0
+    right = len(array) - 1
+
+    # Продовжуємо пошук, доки область пошуку не буде пустою
+    while left <= right:
+        # Знайти середній індекс поточної області пошуку
+        mid = (left + right) // 2
+        
+        # Debug print: вивести поточні межі та середнє значення
+        # print(f «Пошук між {left} та {right}, mid = {mid}, value = {array[mid]}»)
+
+        # Випадок 1: знайдено за середнім індексом
+        if array[mid] == target:
+            return True
+        
+        # Випадок 2: ціль більше за середнє значення
+        # Тому відкидаємо ліву половину (включаючи mid)
+        elif array[mid] < target:
+            left = mid + 1
+        
+        # Випадок 3: target менше середнього значення
+        # Відкидаємо праву половину (включаючи mid)
+        else:
+            right = mid - 1
+
+    # Якщо цикл завершується, то елемент не знайдено
+    return False
+
+# --------- Main Program ---------
+
+# Кількість метеликів
+n = int(input())
+
+# Відсортований список номерів
+collection = list(map(int, input().split()))
+
+# Кількість запитів
+m = int(input())
+
+# Список метеликів для перевірки
+queries = list(map(int, input().split()))
+
+# По кожному запиту використовуємо БП, щоб перевірити, чи є він у колекції
+for q in queries:
+    # Викликаємо binary_search
+    if binary_search(collection, q):
+        print(«YES»)
+    else:
+        print(«NO»)

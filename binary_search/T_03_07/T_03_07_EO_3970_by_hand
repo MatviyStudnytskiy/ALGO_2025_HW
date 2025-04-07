@@ -1,0 +1,47 @@
+# Знаходження першого індексу, де arr[i] >= target
+def lower_bound(arr, target):
+    left, right = 0, len(arr) # Діапазон [left, right)
+    while left < right:
+        mid = (left + right) // 2
+        # Якщо середнє значення менше за цільове,
+        # відкидаємо ліву половину, включаючи mid
+        if arr[mid] < target:
+            left = mid + 1
+        else:
+            # В іншому випадку mid може залишаємо
+            right = mid
+    return left # Перший індекс, де значення >= target
+
+# Знаходження першого індексу, де arr[i] > target
+def upper_bound(arr, target):
+    left, right = 0, len(arr) # Діапазон [left, right)
+    while left < right:
+        mid = (left + right) // 2
+        # Якщо середнє значення =< target,
+        # воно не може бути першим значенням > target, пропускаємо 
+        if arr[mid] <= target:
+            left = mid + 1
+        else:
+            # Інакше mid залишаємо
+            right = mid
+    return left # Перший індекс, де значення > target
+
+n = int(input())
+якщо n > 0:
+    colors = list(map(int, input().split()))  # Відсортований список 
+else:
+    colors = []
+
+# Кількість та значення запитів
+m = int(input())
+queries = list(map(int, input().split()))
+
+# Для кожного запиту бінарний пошук
+for q in queries:
+    # lower_bound дає індекс першої появи q
+    low = lower_bound(colors, q)
+    # upper_bound дає індекс одразу після останньої появи q
+    high = upper_bound(colors, q)
+    # Кількість появ q є різницяею
+    count = high - low
+    print(count)

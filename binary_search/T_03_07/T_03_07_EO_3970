@@ -1,27 +1,36 @@
 import sys
 import bisect
 
-# Read input all at once for efficiency
+# Ефективне зчитування вхідних даних (швидше ніж кілька input())
 input_data = sys.stdin.read().split()
 
-# Read n
+# Кількість елементів у списку 'colors'
 n = int(input_data[0])
 
-# Read colors if n > 0, else set an empty list
+#'n' цілих чисел зі списку 'colors'
 colors = list(map(int, input_data[1:n+1])) if n > 0 else []
 
-# Read m
+# Кількість запитів
 m = int(input_data[n+1])
 
-# Read queries
+# Значення запитів
 queries = list(map(int, input_data[n+2:n+2+m]))
 
-# Process queries using binary search
+# Результати для кожного запиту
 result = []
-for q in queries:
-    left = bisect.bisect_left(colors, q)
-    right = bisect.bisect_right(colors, q)
-    result.append(str(right - left))  # Convert to string for fast output
 
-# Print results efficiently
-sys.stdout.write("\n".join(result) + "\n")
+# Для кожного запиту 'q' число разів в 'colors'
+для q у запитах:
+    # bisect_left повертає індекс першого входження 'q' в 'colors'
+    # Якщо не знайдено, повертає індекс, куди його можна вставити для збереження порядку
+    left = bisect.bisect_left(colors, q)
+
+    # bisect_right повертає індекс відразу після останнього входження 'q'
+    # Якщо 'q' не знайдено, повертає індекс, де його можна вставити для збереження порядку
+    right = bisect.bisect_right(colors, q)
+
+    # Різниця між правим та лівим значенням дає кількість 'q' в 'colors'
+    result.append(str(right - left))  # Перетворення в рядок для ефективного виведення
+
+# Ефективне виведення
+sys.stdout.write(«\n».join(result) + «\n»)
