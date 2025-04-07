@@ -1,31 +1,40 @@
 import sys
-import bisect
+import bisect  # модуль використаємо для оптимізуації пошуку
 
-# Read input efficiently
+# Ефективне зчитування вхідних даних (швидше ніж кілька input())
 input_data = sys.stdin.read().split()
 
-# Read n (number of species in the collection)
+# кількість видів метеликів у колекції
 n = int(input_data[0])
 
-# Read butterfly species (sorted)
+# Зчитати відсортований список видів метеликів (ID або номери)
+# Відсортований для коректної роботи бінарного пошуку
 butterflies = list(map(int, input_data[1:n+1]))
 
-# Read m (number of queries)
+# Кількість видів метеликів у колекції
 m = int(input_data[n+1])
 
-# Read queries
+# Види, які ми хочемо шукати в колекції
 queries = list(map(int, input_data[n+2:n+2+m]))
 
-# Prepare output list
+# Список для зберігання результатів для кожного запиту
 result = []
 
-# Process each query
+# Обробка кожного із запитів по виду по черзі
 for q in queries:
+    # Використовуємо бінарний пошук, щоб знайти крайню ліву позицію, куди можна вставити 'q'
+    # Зі збереженням відсортованого порядку списку 'butterflies'
     idx = bisect.bisect_left(butterflies, q)
-    if idx < n and butterflies[idx] == q:
-        result.append("YES")
-    else:
-        result.append("NO")
 
-# Print all results efficiently
+    # bisect_left повертає індекс, на який потрапить 'q', якщо його вставити:
+    # якщо 'q' вже є у списку, idx вказує на перше входження
+    # якщо ні, то idx вказує на місце вставки, щоб список залишався відсортованим
+
+    # Тепер перевіримо, чи елемент з індексом 'idx' дійсно дорівнює 'q'
+    # Тобто підтвердимо 'q' присутній у списку
+    if idx < n and butterflies[idx] == q:
+        result.append("YES")  # За індексом 'idx' знайдено 'q'
+    else:
+        result.append("NO")   # 'q' відсутній у списку
+# Ефективно виведемо усі результати одразу
 sys.stdout.write("\n".join(result) + "\n")
