@@ -1,0 +1,34 @@
+import sys
+sys.set_int_max_str_digits(10**6)
+
+def karatsuba(x: int, y: int) -> int:
+    # Base case: switch to built-in multiplication for smaller numbers
+    if x < 10**4000 or y < 10**4000:
+        return x * y
+
+    # Get number of decimal digits (not bits)
+    x_str, y_str = str(x), str(y)
+    n = max(len(x_str), len(y_str))
+    m = n // 2
+
+    # Split the integers by decimal position
+    high_x, low_x = divmod(x, 10**m)
+    high_y, low_y = divmod(y, 10**m)
+
+    # 3 recursive calls
+    z0 = karatsuba(low_x, low_y)
+    z2 = karatsuba(high_x, high_y)
+    z1 = karatsuba(high_x + low_x, high_y + low_y) - z2 - z0
+
+    return z2 * 10**(2 * m) + z1 * 10**m + z0
+
+def main():
+    input_line = sys.stdin.readline().strip()
+    if input_line:
+        a_str, b_str = input_line.split()
+        a = int(a_str)
+        b = int(b_str)
+        print(karatsuba(a, b))
+
+if __name__ == '__main__':
+    main()

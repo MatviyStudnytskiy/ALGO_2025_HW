@@ -1,0 +1,38 @@
+def best_track_combination(N, tracks):
+    best_sum = 0
+    visited = set()
+
+    def backtrack(index, current_sum):
+        nonlocal best_sum
+        if current_sum > N:
+            return
+        if current_sum == N:
+            best_sum = N
+            return
+        if current_sum > best_sum:
+            best_sum = current_sum
+        if index == len(tracks):
+            return
+        key = (index, current_sum)
+        if key in visited:
+            return
+        visited.add(key)
+
+        # Include current track
+        backtrack(index + 1, current_sum + tracks[index])
+        # Exclude current track
+        backtrack(index + 1, current_sum)
+
+    backtrack(0, 0)
+    print(f'sum:{best_sum}')
+
+
+# Read from standard input
+import sys
+for line in sys.stdin:
+    if not line.strip():
+        continue
+    parts = list(map(int, line.strip().split()))
+    N = parts[0]
+    track_list = parts[2:]
+    best_track_combination(N, track_list)
