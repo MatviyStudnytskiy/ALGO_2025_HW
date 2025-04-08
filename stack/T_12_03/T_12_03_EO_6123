@@ -1,0 +1,62 @@
+class Node:
+    def __init__(self, value, below=None):
+        self.value = value
+        self.below = below
+
+class RecursiveStack:
+    def __init__(self):
+        self.top_node = None
+        self.count = 0
+
+    def push(self, value):
+        self.top_node = Node(value, self.top_node)
+        self.count += 1
+        print("ok")
+
+    def pop(self):
+        if self.top_node is None:
+            print("error")
+        else:
+            print(self.top_node.value)
+            self.top_node = self.top_node.below
+            self.count -= 1
+
+    def back(self):
+        if self.top_node is None:
+            print("error")
+        else:
+            print(self.top_node.value)
+
+    def size(self):
+        print(self.count)
+
+    def clear(self):
+        self.top_node = None
+        self.count = 0
+        print("ok")
+
+def main():
+    stack = RecursiveStack()
+    while True:
+        try:
+            command = input().strip()
+        except EOFError:
+            break
+
+        if command.startswith("push"):
+            _, n = command.split()
+            stack.push(int(n))
+        elif command == "pop":
+            stack.pop()
+        elif command == "back":
+            stack.back()
+        elif command == "size":
+            stack.size()
+        elif command == "clear":
+            stack.clear()
+        elif command == "exit":
+            print("bye")
+            break
+
+if __name__ == "__main__":
+    main()

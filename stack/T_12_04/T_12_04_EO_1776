@@ -1,0 +1,42 @@
+def can_achieve_order(n, target):
+    stack = []
+    current = 1  # Start with coach 1 from direction A
+    for coach in target:
+        while current <= n and (not stack or stack[-1] != coach):
+            stack.append(current)
+            current += 1
+        if stack[-1] == coach:
+            stack.pop()
+        else:
+            return "No"
+    return "Yes"
+
+def main():
+    import sys
+    input = sys.stdin.read
+    data = input().strip().splitlines()
+    
+    i = 0
+    result = []
+    
+    while i < len(data):
+        line = data[i].strip()
+        i += 1
+        if line == '0':
+            break
+        n = int(line)
+        block_result = []
+        while i < len(data):
+            line = data[i].strip()
+            i += 1
+            if line == '0':
+                break
+            target = list(map(int, line.split()))
+            block_result.append(can_achieve_order(n, target))
+        result.extend(block_result)
+        result.append("")  # Blank line after each block
+
+    print("\n".join(result))
+
+if __name__ == "__main__":
+    main()

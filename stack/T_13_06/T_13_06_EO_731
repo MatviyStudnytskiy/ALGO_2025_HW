@@ -1,0 +1,52 @@
+precedence = {'+': 1, '-': 1, '*': 2, '/': 2}
+
+def needs_parentheses(current_op, sub_expr, is_right):
+    expr, last_op = sub_expr
+    
+    # If there's no previous operator, it's a plain operand (e.g., "a", "b"), so no parentheses needed.
+    if last_op is None:
+        return False
+
+    p1 = precedence[current_op]
+    p2 = precedence[last_op]
+
+    if p1 < p2:
+        return False
+    if p1 > p2:
+        return True
+
+    # If precedence is equal
+    if current_op in '-/' and is_right:
+        return True  # Non-associative and on the right
+    return False
+
+def prefix_to_infix(prefix):
+    stack = []
+    for ch in reversed(prefix):
+        if ch.isalpha():
+            stack.append((ch, None))  # Operand with no operator
+        else:  # Operator
+            left_expr = stack.pop()
+            right_expr = stack.pop()
+
+            if needs_parentheses(ch, left_expr, is_right=False):
+                left = f'({left_expr[0]})'
+            else:
+                left = left_expr[0]
+
+            if needs_parentheses(ch, right_expr, is_right=True):
+                right = f'({right_expr[0]})'
+            else:
+                right = right_expr[0]
+
+            combined = f'{left}{ch}{right}'
+            stack.append((combined, ch))
+
+    return stack[0][0]
+
+def main():
+    prefix = input().strip()
+    print(prefix_to_infix(prefix))
+
+if __name__ == "__main__":
+    main()
