@@ -1,34 +1,41 @@
-import sys
+EMPTY = None
 
-# Custom Hash Table Implementation
-class HashTable:
-    def __init__(self, size=100003):  # Large prime number to reduce collisions
-        self.size = size
-        self.table = [[] for _ in range(size)]
-        self.unique_count = 0
+def is_prime(n):
+    if n < 2:
+        return False
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
 
-    def _hash(self, number):
-        """Simple modular hash function"""
-        return number % self.size
+class HashSet:
+    def __init__(self, size=200003):
+        self._size = size
+        self._keys = [EMPTY] * size
+        self._count = 0
 
-    def insert(self, number):
-        """Insert number if not already present"""
-        h = self._hash(number)
-        if number not in self.table[h]:  # Avoid duplicates
-            self.table[h].append(number)
-            self.unique_count += 1
+    def hash(self, key):
+        return key % self._size
 
-# Read input
-input_data = sys.stdin.read().split("\n")
-N = int(input_data[0])
-numbers = map(int, input_data[1].split())
+    def insert(self, key):
+        i = self.hash(key)
+        while self._keys[i] is not EMPTY:
+            if self._keys[i] == key:
+                return  # Exists
+            i = (i + 1) % self._size
+        self._keys[i] = key
+        self._count += 1
 
-# Create hash table
-contact_book = HashTable()
+    def count(self):
+        return self._count
 
-# Insert numbers
-for num in numbers:
-    contact_book.insert(num)
+# Read and solve:
+if __name__ == "__main__":
+    n = int(input())
+    numbers = list(map(int, input().split()))
+    
+    hs = HashSet()
+    for num in numbers:
+        hs.insert(num)
 
-# Output unique count
-print(contact_book.unique_count)
+    print(hs.count())
