@@ -1,69 +1,75 @@
-import sys
 import re
 
-# Custom Hash Table Implementation
 class HashTable:
-    def __init__(self, size=10003):  # Large prime number for fewer collisions
+    def __init__(self, size):
         self.size = size
-        self.table = [[] for _ in range(size)]
+        self.keys = [None] * size
 
     def _hash(self, word):
-        """Polynomial rolling hash function"""
-        p = 31
         hash_value = 0
-        p_pow = 1
-        for char in word:
-            hash_value = (hash_value + (ord(char) - ord('a') + 1) * p_pow) % self.size
-            p_pow = (p_pow * p) % self.size
+        for ch in word:
+            hash_value = (hash_value * 31 + ord(ch)) % self.size
         return hash_value
 
     def insert(self, word):
-        """Insert word into hash table if not already present"""
-        h = self._hash(word)
-        if word not in self.table[h]:  # Avoid duplicates
-            self.table[h].append(word)
+        idx = self._hash(word)
+        while self.keys[idx] is not None:
+            if self.keys[idx] == word:
+                return  # Already inserted
+            idx = (idx + 1) % self.size
+        self.keys[idx] = word
 
     def contains(self, word):
-        """Check if word exists in hash table"""
-        h = self._hash(word)
-        return word in self.table[h]
+        idx = self._hash(word)
+        start_idx = idx
+        while self.keys[idx] is not None:
+            if self.keys[idx] == word:
+                return True
+            idx = (idx + 1) % self.size
+            if idx == start_idx:
+                break
+        return False
 
-# Read input
-input_data = sys.stdin.read().split("\n")
+    def get_all_words(self):
+        return [word for word in self.keys if word is not None]
 
-N, M = map(int, input_data[0].split())
-
-# Create hash tables
-dictionary = HashTable()
-essay_words = HashTable()
+# Input reading
+n, m = map(int, input().split())
+dict_table = HashTable(2003)
+essay_table = HashTable(20011)
 
 # Read dictionary words
-for i in range(1, N + 1):
-    word = input_data[i].strip().lower()
-    dictionary.insert(word)
+for _ in range(n):
+    word = input().strip().lower()
+    dict_table.insert(word)
 
-# Process essay
-essay_text = " ".join(input_data[N + 1:])  # Join remaining lines
-words_in_essay = re.findall(r"[a-zA-Z]+", essay_text.lower())  # Extract words
+# Read and normalize essay text
+essay_words = []
+for _ in range(m):
+    line = input().strip().lower()
+    words = re.findall(r"[a-z]+", line)  # only words, strip punctuation
+    for word in words:
+        essay_table.insert(word)
+        essay_words.append(word)
 
-# Add words to essay hash table and check if unknown words exist
-unknown_words_exist = False
-for word in words_in_essay:
-    essay_words.insert(word)
-    if not dictionary.contains(word):
-        unknown_words_exist = True  # Found an unknown word
+# Check for unknown words
+unknown_found = False
+for word in essay_words:
+    if not dict_table.contains(word):
+        unknown_found = True
+        break
 
-# Check if all dictionary words are in the essay
-missing_words_exist = False
-for i in range(1, N + 1):
-    word = input_data[i].strip().lower()
-    if not essay_words.contains(word):
-        missing_words_exist = True  # Found a missing word
-
-# Output the result
-if unknown_words_exist:
+if unknown_found:
     print("Some words from the text are unknown.")
-elif missing_words_exist:
-    print("The usage of the vocabulary is not perfect.")
 else:
-    print("Everything is going to be OK.")
+    # Check for missing words from dictionary
+    usage_not_perfect = False
+    for word in dict_table.get_all_words():
+        if not essay_table.contains(word):
+            usage_not_perfect = True
+            break
+
+    if usage_not_perfect:
+        print("The usage of the vocabulary is not perfect.")
+    else:
+        print("Everything is going to be OK.")
